@@ -5,7 +5,7 @@ import glbIcon from "../assets/images/globe.svg";
 import menuIcon from "../assets/images/menu.svg";
 import avatar from "../assets/images/avatar.png";
 
-const Header = () => {
+const Header = ({ dateSearchKey }) => {
   return (
     <div className="px-5 py-5">
       <div className="flex justify-between items-center mb-6">
@@ -14,7 +14,11 @@ const Header = () => {
         </div>
         <div className="menu-search">
           <div className="search-field">
-            <input type="text" placeholder="Search..." />
+            <input
+              onChange={(e) => dateSearchKey(e.target.value)}
+              type="date"
+              placeholder="Search..."
+            />
           </div>
           <span>
             <img src={srcIcon} alt="" />

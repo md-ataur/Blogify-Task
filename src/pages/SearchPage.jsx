@@ -8,8 +8,12 @@ import starIcon from "../assets/images/star.svg";
 const SearchPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [properties, setProperties] = useState([]);
+  const [filterData, setFilterData] = useState([]);
+  const [dateSearch, setDateSearch] = useState("");
 
-  console.log(properties);
+  const dateSearchKey = (value) => {
+    setDateSearch(value);
+  };
 
   // Data fetch from api
   const fetchApi = async () => {
@@ -30,15 +34,23 @@ const SearchPage = () => {
     fetchApi();
   }, []);
 
+  useEffect(() => {
+    if (properties && dateSearch) {
+      setFilterData(properties.filter((property) => property.date.includes(dateSearch)));
+    } else {
+      setFilterData(properties);
+    }
+  }, [filterData, properties, dateSearch]);
+
   return (
     <>
-      <Header />
+      <Header dateSearchKey={dateSearchKey} />
       <div className="border-t">
         <div className="px-5 py-5 mt-10">
           {isLoading && <p className="text-lg pb-4">Loading...</p>}
           <div className="w-[800px]">
-            {properties.length > 0 &&
-              properties.map((property) => (
+            {filterData.length > 0 &&
+              filterData.map((property) => (
                 <div key={property.id} className="flex gap-6 border-b pb-5 mb-5">
                   <img width="300px" src={property.src} alt="" />
                   <div className="w-[400px] flex flex-col justify-between">
@@ -75,37 +87,6 @@ const SearchPage = () => {
                   </div>
                 </div>
               ))}
-            {/* <div className="flex gap-6 border-b pb-5 mb-5">
-              <img width="300px" src={img1} alt="" />
-              <div className="w-[400px] flex flex-col justify-between">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-[14px] text-gray-500">Entire home in Bordeaux</p>
-                    <h3 className="text-lg font-semibold text-[#374151]">Bordeaux Getaway</h3>
-                  </div>
-                  <img width="30px" src={heartIcon} alt="" />
-                </div>
-                <div>
-                  <p className="text-[14px] text-gray-500">
-                    4-6 guests · Entire Home · 5 beds · 3 bath
-                  </p>
-                  <p className="text-[14px] text-gray-500">Wifi · Kitchen · Free Parking</p>
-                </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-[14px] flex justify-between gap-1">
-                    <span>5.0</span>
-                    <span>
-                      <img src={starIcon} alt="" />
-                    </span>
-                    <span>(320 reviews)</span>
-                  </p>
-                  <div>
-                    <span className="text-lg">$325</span>
-                    <span className="text-[13px] text-gray-600 ml-1">/night</span>
-                  </div>
-                </div>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
