@@ -1,51 +1,115 @@
-import React from "react";
-import logo from "../assets/images/logo.svg";
-import srcIcon from "../assets/images/search.svg";
-import glbIcon from "../assets/images/globe.svg";
-import menuIcon from "../assets/images/menu.svg";
-import avatar from "../assets/images/avatar.png";
+import React, { useEffect, useState } from "react";
+import Header from "../components/Header";
+import img1 from "../assets/images/image1.jpg";
+import img2 from "../assets/images/image2.jpg";
+import heartIcon from "../assets/images/heart.svg";
+import starIcon from "../assets/images/star.svg";
 
 const SearchPage = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [properties, setProperties] = useState([]);
+
+  console.log(properties);
+
+  // Data fetch from api
+  const fetchApi = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("http://localhost:9000/house");
+      if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+      const data = await response.json();
+      setProperties(data);
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchApi();
+  }, []);
+
   return (
-    <div className="px-5 py-5">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <img src={logo} alt="" />
-        </div>
-        <div className="menu-search">
-          <div className="search-field">
-            <input type="text" placeholder="Search..." />
-          </div>
-          <span>
-            <img src={srcIcon} alt="" />
-          </span>
-        </div>
-        <div className="flex items-center gap-4">
-          <div className="flex gap-4 items-center">
-            <h3 className="font-bold w-[130px]">Become a Host</h3>
-            <img src={glbIcon} alt="" />
-          </div>
-          <div className="flex gap-3 items-center border rounded-3xl px-4 py-2">
-            <img src={menuIcon} alt="" />
-            <img src={avatar} alt="" />
+    <>
+      <Header />
+      <div className="border-t">
+        <div className="px-5 py-5 mt-10">
+          {isLoading && <p className="text-lg pb-4">Loading...</p>}
+          <div className="w-[800px]">
+            {properties.length > 0 &&
+              properties.map((property) => (
+                <div key={property.id} className="flex gap-6 border-b pb-5 mb-5">
+                  <img width="300px" src={property.src} alt="" />
+                  <div className="w-[400px] flex flex-col justify-between">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p className="text-[14px] text-gray-500">Entire home in Bordeaux</p>
+                        <h3 className="text-lg font-semibold text-[#374151]">{property.title}</h3>
+                      </div>
+                      <img width="30px" src={heartIcon} alt="" />
+                    </div>
+                    <div>
+                      <p className="text-[14px] text-gray-500">
+                        {property.guests} guests · Entire Home · {property.bed} beds ·{" "}
+                        {property.bath} bath
+                      </p>
+                      <p className="text-[14px] text-gray-500">
+                        {property.wifi ? "Wifi" : "No"} · {property.kitchen ? "Kitchen" : "No"} ·{" "}
+                        {property.parking ? "Free Parking" : "No"}
+                      </p>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <p className="text-[14px] flex justify-between gap-1">
+                        <span>5.0</span>
+                        <span>
+                          <img src={starIcon} alt="" />
+                        </span>
+                        <span>({property.reviews} reviews)</span>
+                      </p>
+                      <div>
+                        <span className="text-lg">${property.price}</span>
+                        <span className="text-[13px] text-gray-600 ml-1">/night</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            {/* <div className="flex gap-6 border-b pb-5 mb-5">
+              <img width="300px" src={img1} alt="" />
+              <div className="w-[400px] flex flex-col justify-between">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="text-[14px] text-gray-500">Entire home in Bordeaux</p>
+                    <h3 className="text-lg font-semibold text-[#374151]">Bordeaux Getaway</h3>
+                  </div>
+                  <img width="30px" src={heartIcon} alt="" />
+                </div>
+                <div>
+                  <p className="text-[14px] text-gray-500">
+                    4-6 guests · Entire Home · 5 beds · 3 bath
+                  </p>
+                  <p className="text-[14px] text-gray-500">Wifi · Kitchen · Free Parking</p>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="text-[14px] flex justify-between gap-1">
+                    <span>5.0</span>
+                    <span>
+                      <img src={starIcon} alt="" />
+                    </span>
+                    <span>(320 reviews)</span>
+                  </p>
+                  <div>
+                    <span className="text-lg">$325</span>
+                    <span className="text-[13px] text-gray-600 ml-1">/night</span>
+                  </div>
+                </div>
+              </div>
+            </div> */}
           </div>
         </div>
       </div>
-      <div className="flex gap-3">
-        <span className="border rounded-3xl px-4 py-2">Price</span>
-        <span className="border rounded-3xl px-4 py-2">Type of place</span>
-        <span className="border rounded-3xl px-4 py-2">Free cancellation</span>
-        <span className="border rounded-3xl px-4 py-2">Wifi</span>
-        <span className="border rounded-3xl px-4 py-2">Kitchen</span>
-        <span className="border rounded-3xl px-4 py-2">Air condition</span>
-        <span className="border rounded-3xl px-4 py-2">Washer</span>
-        <span className="border rounded-3xl px-4 py-2">Iron</span>
-        <span className="border rounded-3xl px-4 py-2">Dedicated workspace</span>
-        <span className="border rounded-3xl px-4 py-2">Free parking</span>
-        <span className="border rounded-3xl px-4 py-2">Dryer</span>
-        <span className="border rounded-3xl px-4 py-2">Filters</span>
-      </div>
-    </div>
+    </>
   );
 };
 
